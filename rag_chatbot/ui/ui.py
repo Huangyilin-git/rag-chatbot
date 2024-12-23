@@ -100,7 +100,7 @@ class LocalChatbotUI:
         logger: Logger,
         host: str = "host.docker.internal",
         data_dir: str = "data/data",
-        avatar_images: list[str] = ["./assets/user.png", "./assets/bot.png"],
+        avatar_images: list[str] = ["./assets/user2.png", "./assets/bot2.png"],
     ):
         self._pipeline = pipeline
         self._logger = logger
