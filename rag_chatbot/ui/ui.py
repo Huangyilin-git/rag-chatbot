@@ -284,7 +284,7 @@ class LocalChatbotUI:
 
     def build(self):
         with gr.Blocks(
-            theme=gr.themes.Soft(primary_hue="slate"),
+            theme=gr.themes.Default(primary_hue="blue"),
             js=JS_LIGHT_THEME,
             css=CSS,
         ) as demo:
