@@ -473,78 +473,80 @@ class LocalChatbotUI:
             with gr.Tab("Monitoring"):
                 with gr.Row():
                     start = gr.DateTime("2024-12-01 00:00:00", label="Start")
-                    end = gr.DateTime("2025-01-31 00:00:00", label="End")
+                    end = gr.DateTime("2025-12-31 00:00:00", label="End")
                     apply_btn = gr.Button("Apply", scale=0)
                 with gr.Row():
                     group_by = gr.Radio(["None", "30m", "1h", "4h", "1d"], value="None", label="Group by")
                     aggregate = gr.Radio(["sum", "mean", "median", "min", "max"], value="sum", label="Aggregation")
 
-                    
                 with gr.Row():
-                    temp_by_time1 = gr.LinePlot(
+                    # 将LinePlot改为BarPlot来展示柱状图，相应参数调整
+                    temp_by_time1 = gr.BarPlot(
                         temp_sensor_data,
                         x="time",
                         y="ROUGE-L Score",
                     )
-                    temp_by_time2 = gr.LinePlot(
+                    temp_by_time2 = gr.BarPlot(
                         temp_sensor_data,
                         x="time",
                         y="Cosine Similarity",
                     )
                 with gr.Row():
-                    temp_by_time3 = gr.LinePlot(
+                    temp_by_time3 = gr.BarPlot(
                         temp_sensor_data,
                         x="time",
                         y="LLM Assessment Score",
                     )
-                    temp_by_time4 = gr.LinePlot(
+                    temp_by_time4 = gr.BarPlot(
                         temp_sensor_data,
                         x="time",
                         y="Similarity Score",
                     )
                 with gr.Row():
-                    temp_by_time5 = gr.LinePlot(
+                    temp_by_time5 = gr.BarPlot(
                         temp_sensor_data,
                         x="time",
                         y="Accuracy",
                     )
-                    temp_by_time8 = gr.LinePlot(
+                    temp_by_time8 = gr.BarPlot(
                         temp_sensor_data,
                         x="time",
                         y="User Satisfaction Rate",
                     )
                 with gr.Row():
-                    temp_by_time7 = gr.LinePlot(
+                    temp_by_time7 = gr.BarPlot(
                         temp_sensor_data,
                         x="time",
                         y="Total Messages",
                     )
-                    temp_by_time6 = gr.LinePlot(
+                    temp_by_time6 = gr.BarPlot(
                         temp_sensor_data,
                         x="time",
                         y="Total Conversations",
                     )
 
-                time_graphs = [temp_by_time1, temp_by_time2, temp_by_time3, temp_by_time4, temp_by_time5, temp_by_time6, temp_by_time7, temp_by_time8]
+                bar_graphs = [temp_by_time1, temp_by_time2, temp_by_time3, temp_by_time4, temp_by_time5, temp_by_time6,
+                            temp_by_time7, temp_by_time8]
                 group_by.change(
-                    lambda group: [gr.LinePlot(x_bin=None if group == "None" else group)] * len(time_graphs),
+                    lambda group: [gr.BarPlot(x_bin=None if group == "None" else group)] * len(bar_graphs),
                     group_by,
-                    time_graphs
+                    bar_graphs
                 )
                 aggregate.change(
-                    lambda aggregate: [gr.LinePlot(y_aggregate=aggregate)] * len(time_graphs),
+                    lambda aggregate: [gr.BarPlot(y_aggregate=aggregate)] * len(bar_graphs),
                     aggregate,
-                    time_graphs
+                    bar_graphs
                 )
 
                 def rescale(select: gr.SelectData):
                     return select.index
-                rescale_evt = gr.on([plot.select for plot in time_graphs], rescale, None, [start, end])
+                rescale_evt = gr.on([plot.select for plot in bar_graphs], rescale, None, [start, end])
 
                 for trigger in [apply_btn.click, rescale_evt.then]:
                     trigger(
-                        lambda start, end: [gr.LinePlot(x_lim=[start, end])] * len(time_graphs), [start, end], time_graphs
+                        lambda start, end: [gr.BarPlot(x_lim=[start, end])] * len(bar_graphs), [start, end], bar_graphs
                     )
+
             with gr.Tab("Log"):
                 with gr.Row(variant=self._variant):
                     log = gr.Code(
